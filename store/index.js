@@ -5,6 +5,7 @@ const createStore = () => {
     state: {
       headlines: [],
       loading: false,
+      token: '',
       category: '',
       country: 'br'
     },
@@ -14,6 +15,9 @@ const createStore = () => {
       },
       setLoading (state, loading) {
         state.loading = loading
+      },
+      setToken (state, token) {
+        state.token = token
       },
       setCategory (state, category) {
         state.category = category
@@ -33,7 +37,7 @@ const createStore = () => {
         try {
           commit('setLoading', true)
           const authUserData = await this.$axios.$post('/register/',userPayload)
-          console.log(authUserData)
+          commit('setToken', authUserData)
           commit('setLoading', false)
         } catch (error) {
           console.error(error)
@@ -44,6 +48,7 @@ const createStore = () => {
     getters: {
       headlines: state => state.headlines,
       loading: state => state.loading,
+      isAuthenticated: state => !!state.token,
       category: state => state.category,
       country: state => state.country,
     }

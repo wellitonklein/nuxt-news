@@ -1,31 +1,59 @@
 <template>
-    <div class="md-layout md-alignment-center-center" style="height: 100vh;">
-      <md-card class="md-layout-item md-size-50">
-        <md-card-header>
-          <div class="md-title">Register</div>
-        </md-card-header>
+  <div
+    class="md-layout md-alignment-center-center"
+    style="height: 100vh;"
+  >
+    <md-card class="md-layout-item md-size-50">
+      <md-card-header>
+        <div class="md-title">Register</div>
+      </md-card-header>
 
-        <!-- Register Form -->
-        <form @submit.prevent="registerUser">
-          <md-card-content>
-            <md-field md-clearable>
-              <label for="email">E-mail</label>
-              <md-input type="email" name="email" id="email" autocomplete="email" v-model="form.email" />
-            </md-field>
+      <!-- Register Form -->
+      <form @submit.prevent="registerUser">
+        <md-card-content>
+          <md-field md-clearable>
+            <label for="email">E-mail</label>
+            <md-input
+              :disabled="loading"
+              type="email"
+              name="email"
+              id="email"
+              autocomplete="email"
+              v-model="form.email"
+            />
+          </md-field>
 
-            <md-field md-clearable>
-              <label for="password">password</label>
-              <md-input type="password" name="password" id="password" autocomplete="password" v-model="form.password" />
-            </md-field>
-          </md-card-content>
+          <md-field md-clearable>
+            <label for="password">password</label>
+            <md-input
+              :disabled="loading"
+              type="password"
+              name="password"
+              id="password"
+              autocomplete="password"
+              v-model="form.password"
+            />
+          </md-field>
+        </md-card-content>
 
-          <md-card-actions>
-            <md-button @click="$router.push('/login')">Go to Login</md-button>
-            <md-button class="md-primary md-raised" type="submit">Submit</md-button>
-          </md-card-actions>
-        </form>
-      </md-card>
-    </div>
+        <md-card-actions>
+          <md-button @click="$router.push('/login')">Go to Login</md-button>
+          <md-button
+            :disabled="loading"
+            class="md-primary md-raised"
+            type="submit"
+          >
+            Submit
+          </md-button>
+        </md-card-actions>
+      </form>
+
+      <md-snackbar :md-active.sync="isAuthenticated">
+        {{form.email}} was successfully registered!
+      </md-snackbar>
+
+    </md-card>
+  </div>
 </template>
 
 <script>
@@ -36,6 +64,21 @@ export default {
       password: ''
     }
   }),
+  computed: {
+    loading () {
+      return this.$store.getters.loading
+    },
+    isAuthenticated () {
+      return this.$store.getters.isAuthenticated
+    }
+  },
+  watch: {
+    isAuthenticated (value) {
+      if (value) {
+        setTimeout(() => this.$router.push('/'), 2000)
+      }
+    }
+  },
   methods: {
     async registerUser () {
       await this.$store.dispatch('authenticateUser', {
