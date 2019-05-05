@@ -5,7 +5,8 @@ const createStore = () => {
     state: {
       headlines: [],
       loading: false,
-      category: ''
+      category: '',
+      country: 'br'
     },
     mutations: {
       setHeadlines (state, headlines) {
@@ -16,6 +17,9 @@ const createStore = () => {
       },
       setCategory (state, category) {
         state.category = category
+      },
+      setCountry (state, country) {
+        state.country = country
       }
     },
     actions: {
@@ -30,6 +34,7 @@ const createStore = () => {
       headlines: state => state.headlines,
       loading: state => state.loading,
       category: state => state.category,
+      country: state => state.country,
     }
   })
 }
