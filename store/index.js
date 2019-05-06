@@ -37,7 +37,8 @@ const createStore = () => {
         state.feed = headlines
       },
       clearToken: state => (state.token = ''),
-      clearUser: state => (state.user = null)
+      clearUser: state => (state.user = null),
+      clearFeed: state => (state.feed = [])
     },
     actions: {
       async loadHeadlines ({ commit }, apiUrl) {
@@ -50,7 +51,7 @@ const createStore = () => {
         if (!state.user) return;
 
         const feedRef = db.collection(`users/${state.user.email}/feed`)
-        await feedRef.get().then(querySnapshot => {
+        await feedRef.onSnapshot(querySnapshot => {
           let headlines = []
           querySnapshot.forEach(doc => {
             headlines.push(doc.data())
@@ -105,6 +106,7 @@ const createStore = () => {
       logoutUser ({ commit }) {
         commit('clearToken')
         commit('clearUser')
+        commit('clearFeed')
         clearUserData()
       }
     },
