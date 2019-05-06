@@ -65,6 +65,10 @@ export default {
     "/register/": {
       target: "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyBXnH8lCdxcSNudLYNlGrXLoxz6i8bobfU",
       pathRewrite: { "^/register/": "" }
+    },
+    "/login/": {
+      target: "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=AIzaSyBXnH8lCdxcSNudLYNlGrXLoxz6i8bobfU",
+      pathRewrite: { "^/login/": "" }
     }
   },
 
