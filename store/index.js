@@ -47,17 +47,18 @@ const createStore = () => {
         commit('setLoading', false)
         commit('setHeadlines', articles)
       },
-      async loadUserFeed ({ state, commit }) {
-        if (!state.user) return;
+      async loadUserFeed({ state, commit }) {
+        if (state.user) {
+          const feedRef = db.collection(`users/${state.user.email}/feed`)
 
-        const feedRef = db.collection(`users/${state.user.email}/feed`)
-        await feedRef.onSnapshot(querySnapshot => {
-          let headlines = []
-          querySnapshot.forEach(doc => {
-            headlines.push(doc.data())
-            commit('setFeed', headlines)
+          await feedRef.onSnapshot(querySnapshot => {
+            let headlines = [];
+            querySnapshot.forEach(doc => {
+              headlines.push(doc.data());
+              commit("setFeed", headlines);
+            })
           })
-        })
+        }
       },
       async addHeadlineToFeed ({ state }, headline) {
         const feedRef = db
@@ -89,7 +90,7 @@ const createStore = () => {
           } else {
             const loginRef = db.collection("users").doc(userPayload.email);
             const loggedInUser = await loginRef.get();
-            user = loggedInUser.data();
+            user = loggedInUser.data()
           }
           commit("setUser", user);
           commit("setToken", authUserData.idToken);
