@@ -55,6 +55,25 @@
           <md-option value="ru">Russia</md-option>
         </md-select>
       </md-field>
+
+      <!-- Feed Content -->
+      <md-list class="md-triple-line" v-for="headline in feed" :key="headline.id">
+        <md-list-item>
+          <md-avatar><img :src="headline.urlToImage" :alt="headline.title"></md-avatar>
+
+          <div class="md-list-item-text">
+            <span><a :href="headline.url" target="_blank">{{headline.title}}</a></span>
+            <span>{{headline.source.name}}</span>
+            <span>View Comments</span>
+          </div>
+
+          <md-button class="md-icon-button md-list-action">
+            <md-icon class="md-accent">delete</md-icon>
+          </md-button>
+        </md-list-item>
+        <md-divider class="md-insert"></md-divider>
+      </md-list>
+
     </md-drawer>
 
     <!-- News Categories (Tight Drawer) -->
@@ -135,7 +154,7 @@
               <md-card-content>{{headline.description}}</md-card-content>
 
               <md-card-actions>
-                <md-button class="md-icon-button">
+                <md-button @click="addHeadlineToFeed(headline)" class="md-icon-button">
                   <md-icon>bookmark</md-icon>
                 </md-button>
 
@@ -168,6 +187,7 @@ export default {
   }),
   async fetch ({ store }) {
     await store.dispatch('loadHeadlines', `/api/top-headlines?country=${store.state.country}&category=${store.state.category}`)
+    await store.dispatch('loadUserFeed')
   },
   watch: {
     async country () {
@@ -177,6 +197,9 @@ export default {
   computed: {
     headlines () {
       return this.$store.getters.headlines
+    },
+    feed () {
+      return this.$store.getters.feed
     },
     category () {
       return this.$store.getters.category
@@ -199,6 +222,11 @@ export default {
       this.$store.commit('setCategory', category)
       await this.$store.dispatch('loadHeadlines', `/api/top-headlines?country=${this.country}&category=${this.category}`)
       this.showRightSidepanel = false
+    },
+    async addHeadlineToFeed (headline) {
+      if (this.user) {
+        await this.$store.dispatch('addHeadlineToFeed', headline)
+      }
     },
     changeCountry (country) {
       this.$store.commit('setCountry', country)
