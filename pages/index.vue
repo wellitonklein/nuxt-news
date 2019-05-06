@@ -19,8 +19,17 @@
       </nuxt-link>
 
       <div class="md-toolbar-section-end">
-        <md-button @click="$router.push('/login')">Login</md-button>
-        <md-button @click="$router.push('/register')">Register</md-button>
+        <template v-if="isAuthenticated">
+          <md-button>
+            <md-avatar><img :src="user.avatar" :alt="user.email"></md-avatar>
+            {{user.email}}
+          </md-button>
+          <md-button>Logout</md-button>
+        </template>
+        <template v-else>
+          <md-button @click="$router.push('/login')">Login</md-button>
+          <md-button @click="$router.push('/register')">Register</md-button>
+        </template>
         <md-button
           class="md-accent"
           @click="showRightSidepanel = true"
@@ -177,6 +186,12 @@ export default {
     },
     loading () {
       return this.$store.getters.loading
+    },
+    user () {
+      return this.$store.getters.user
+    },
+    isAuthenticated () {
+      return this.$store.getters.isAuthenticated
     }
   },
   methods: {

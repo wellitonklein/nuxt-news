@@ -1,9 +1,11 @@
 import Vuex from 'vuex'
+import md5 from 'md5'
 
 const createStore = () => {
   return new Vuex.Store({
     state: {
       headlines: [],
+      user: null,
       loading: false,
       token: '',
       category: '',
@@ -15,6 +17,9 @@ const createStore = () => {
       },
       setLoading (state, loading) {
         state.loading = loading
+      },
+      setUser (state, user) {
+        state.user = user
       },
       setToken (state, token) {
         state.token = token
@@ -37,6 +42,9 @@ const createStore = () => {
         try {
           commit('setLoading', true)
           const authUserData = await this.$axios.$post('/register/',userPayload)
+          const avatar = `http://gravatar.com/avatar/${authUserData.email}?d=identicon`
+          const user = { email: authUserData.email, avatar }
+          commit('setUser', user)
           commit('setToken', authUserData)
           commit('setLoading', false)
         } catch (error) {
@@ -48,6 +56,7 @@ const createStore = () => {
     getters: {
       headlines: state => state.headlines,
       loading: state => state.loading,
+      user: state => state.user,
       isAuthenticated: state => !!state.token,
       category: state => state.category,
       country: state => state.country,
