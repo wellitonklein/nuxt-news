@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="md-layout md-alignment-center-center"
-    style="height: 100vh;"
-  >
+  <div class="md-layout md-alignment-center-center" style="height: 100vh;">
     <md-card class="md-layout-item md-size-50">
       <md-card-header>
         <div class="md-title">Login</div>
@@ -43,35 +40,31 @@
 
         <md-card-actions>
           <md-button @click="$router.push('/register')">Go to Register</md-button>
-          <md-button
-            :disabled="loading"
-            class="md-primary md-raised"
-            type="submit"
-          >
-            Submit
-          </md-button>
+          <md-button :disabled="loading" class="md-primary md-raised" type="submit">Submit</md-button>
         </md-card-actions>
       </form>
 
-      <md-snackbar :md-active.sync="isAuthenticated">
-        {{form.email}} was successfully logged in!
-      </md-snackbar>
-
+      <md-snackbar :md-active.sync="isAuthenticated">{{form.email}} was successfully logged in!</md-snackbar>
     </md-card>
   </div>
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, email, minLength, maxLength } from 'vuelidate/lib/validators'
+import { validationMixin } from "vuelidate";
+import {
+  required,
+  email,
+  minLength,
+  maxLength
+} from "vuelidate/lib/validators";
 
 export default {
-  middleware: 'auth',
+  middleware: "auth",
   mixins: [validationMixin],
   data: () => ({
     form: {
-      email: '',
-      password: ''
+      email: "",
+      password: ""
     }
   }),
   validations: {
@@ -88,43 +81,43 @@ export default {
     }
   },
   computed: {
-    loading () {
-      return this.$store.getters.loading
+    loading() {
+      return this.$store.getters.loading;
     },
-    isAuthenticated () {
-      return this.$store.getters.isAuthenticated
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
     }
   },
   watch: {
-    isAuthenticated (value) {
+    isAuthenticated(value) {
       if (value) {
-        setTimeout(() => this.$router.push('/'), 2000)
+        setTimeout(() => this.$router.push("/"), 2000);
       }
     }
   },
   methods: {
-    validateForm () {
-      this.$v.$touch()
+    validateForm() {
+      this.$v.$touch();
       if (!this.$v.$invalid) {
-        this.loginUser()
+        this.loginUser();
       }
     },
-    async loginUser () {
-      await this.$store.dispatch('authenticateUser', {
-        action: 'login',
+    async loginUser() {
+      await this.$store.dispatch("authenticateUser", {
+        action: "login",
         email: this.form.email,
         password: this.form.password,
         returnSecureToken: true
-      })
+      });
     },
-    getValidationClass (fieldName) {
-      const field = this.$v.form[fieldName]
+    getValidationClass(fieldName) {
+      const field = this.$v.form[fieldName];
       if (field) {
         return {
           "md-invalid": field.$invalid && field.$dirty
-        }
+        };
       }
     }
   }
-}
+};
 </script>
