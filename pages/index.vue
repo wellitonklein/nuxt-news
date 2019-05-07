@@ -8,7 +8,10 @@
       class="fixed-toolbar"
       elevation="1"
     >
-      <md-button @click="showLeftSidepanel = true" class="md-icon-button">
+      <md-button
+        @click="showLeftSidepanel = true"
+        class="md-icon-button"
+      >
         <md-icon>menu</md-icon>
       </md-button>
       <nuxt-link
@@ -21,7 +24,10 @@
       <div class="md-toolbar-section-end">
         <template v-if="isAuthenticated">
           <md-button>
-            <md-avatar><img :src="user.avatar" :alt="user.email"></md-avatar>
+            <md-avatar><img
+                :src="user.avatar"
+                :alt="user.email"
+              ></md-avatar>
             {{user.email}}
           </md-button>
           <md-button @click="logoutUser">Logout</md-button>
@@ -38,16 +44,27 @@
     </md-toolbar>
 
     <!-- Personal News Feed (Left Drawer) -->
-    <md-drawer md-fixed :md-active.sync="showLeftSidepanel">
+    <md-drawer
+      md-fixed
+      :md-active.sync="showLeftSidepanel"
+    >
       <md-toolbar md-elevation="1">
         <span class="md-title">Personal Feed</span>
       </md-toolbar>
 
-      <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+      <md-progress-bar
+        v-if="loading"
+        md-mode="indeterminate"
+      ></md-progress-bar>
 
-      <md-field>
+      <md-field style="margin-left: 20px;">
         <label for="country">Country</label>
-        <md-select @input="changeCountry" :value="country" name="country" id="country">
+        <md-select
+          @input="changeCountry"
+          :value="country"
+          name="country"
+          id="country"
+        >
           <md-option value="br">Brazil</md-option>
           <md-option value="us">United States</md-option>
           <md-option value="ca">Canada</md-option>
@@ -56,20 +73,52 @@
         </md-select>
       </md-field>
 
+      <!-- Default Markup (if Feed Empty) -->
+      <md-empty-state
+        class="md-primary"
+        v-if="feed.length === 0 && !user"
+        md-icon="bookmarks"
+        md-label="Nothing in Feed"
+        md-description="Login to bookmark"
+      >
+        <md-button class="md-primary md-raised" @click="$router.push('/login')">Login</md-button>
+      </md-empty-state>
+
+      <md-empty-state
+        v-else-if="feed.length === 0"
+        class="md-accent"
+        md-icon="bookmark_outline"
+        md-label="Nothing in Feed"
+        md-description="Anything you bookmark will be safely stored here"
+      >
+
+      </md-empty-state>
+
       <!-- Feed Content -->
-      <md-list class="md-triple-line" v-for="(headline, i) in feed" :key="i">
+      <md-list
+        v-else
+        class="md-triple-line"
+        v-for="(headline, i) in feed"
+        :key="i"
+      >
         <md-list-item>
-          <md-avatar><img :src="headline.urlToImage" :alt="headline.title"></md-avatar>
+          <md-avatar><img
+              :src="headline.urlToImage"
+              :alt="headline.title"
+            ></md-avatar>
 
-            <div class="md-list-item-text">
-              <span><a :href="headline.url" target="_blank">{{headline.title}}</a></span>
-              <span>{{headline.source.name}}</span>
-              <span>View Comments</span>
-            </div>
+          <div class="md-list-item-text">
+            <span><a
+                :href="headline.url"
+                target="_blank"
+              >{{headline.title}}</a></span>
+            <span>{{headline.source.name}}</span>
+            <span>View Comments</span>
+          </div>
 
-            <md-button class="md-icon-button md-list-action">
-              <md-icon class="md-accent">delete</md-icon>
-            </md-button>
+          <md-button class="md-icon-button md-list-action">
+            <md-icon class="md-accent">delete</md-icon>
+          </md-button>
         </md-list-item>
         <md-divider class="md-inset"></md-divider>
       </md-list>
@@ -86,7 +135,10 @@
         <span class="md-title">News Categories</span>
       </md-toolbar>
 
-      <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+      <md-progress-bar
+        v-if="loading"
+        md-mode="indeterminate"
+      ></md-progress-bar>
 
       <md-list>
         <md-subheader class="md-primary">Categories</md-subheader>
@@ -154,7 +206,11 @@
               <md-card-content>{{headline.description}}</md-card-content>
 
               <md-card-actions>
-                <md-button @click="addHeadlineToFeed(headline)" class="md-icon-button" :class="isInFeed(headline.title)">
+                <md-button
+                  @click="addHeadlineToFeed(headline)"
+                  class="md-icon-button"
+                  :class="isInFeed(headline.title)"
+                >
                   <md-icon>bookmark</md-icon>
                 </md-button>
 
@@ -185,17 +241,17 @@ export default {
       { name: 'Sports', path: 'sports', icon: 'golf_course' }
     ]
   }),
-  async fetch({ store }) {
+  async fetch ({ store }) {
     await store.dispatch(
       "loadHeadlines",
       `/api/top-headlines?country=${store.state.country}&category=${
-        store.state.category
+      store.state.category
       }`
     )
     await store.dispatch("loadUserFeed")
   },
   watch: {
-    async country() {
+    async country () {
       await this.$store.dispatch(
         "loadHeadlines",
         `/api/top-headlines?country=${this.country}&category=${this.category}`
