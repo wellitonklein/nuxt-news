@@ -129,7 +129,7 @@
                 <div class="md-title">
                   <a :href="headline.url" target="_blank">{{headline.title}}</a>
                 </div>
-                <div>
+                <div @click="loadSource(headline.source.id)">
                   {{headline.source.name}}
                   <md-icon class="small-icon">book</md-icon>
                 </div>
@@ -205,6 +205,9 @@ export default {
     feed() {
       return this.$store.getters.feed;
     },
+    source() {
+      return this.$store.getters.source;
+    },
     category() {
       return this.$store.getters.category;
     },
@@ -229,6 +232,12 @@ export default {
         `/api/top-headlines?country=${this.country}&category=${this.category}`
       );
       this.showRightSidepanel = false;
+    },
+    async loadSource (sourceId) {
+      if (sourceId) {
+        this.$store.commit('setSource', sourceId)
+        await this.$store.dispatch('loadHeadlines', `/api/top-headlines?sources=${this.source}`)
+      }
     },
     async addHeadlineToFeed(headline) {
       if (this.user) {

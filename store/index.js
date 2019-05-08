@@ -11,6 +11,7 @@ const createStore = () => {
       headline: null,
       user: null,
       feed: [],
+      source: '',
       loading: false,
       token: "",
       category: "",
@@ -37,6 +38,9 @@ const createStore = () => {
       },
       setCountry (state, country) {
         state.country = country;
+      },
+      setSource (state, source) {
+        state.source = source
       },
       setFeed (state, headlines) {
         state.feed = headlines;
@@ -222,6 +226,7 @@ const createStore = () => {
       headlines: state => state.headlines,
       headline: state => state.headline,
       feed: state => state.feed,
+      source: state => state.source,
       loading: state => state.loading,
       user: state => state.user,
       isAuthenticated: state => !!state.token,
