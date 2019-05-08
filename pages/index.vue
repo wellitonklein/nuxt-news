@@ -238,8 +238,10 @@ export default {
     async removeHeadlineFromFeed(headline) {
       await this.$store.dispatch("removeHeadlineFromFeed", headline);
     },
-    saveHeadline (headline) {
-      this.$router.push(`/headlines/${headline.slug}`)
+    async saveHeadline(headline) {
+      await this.$store.dispatch('saveHeadline', headline).then(() => {
+        this.$router.push(`/headlines/${headline.slug}`)
+      }).catch(err => console.error(err))
     },
     changeCountry(country) {
       this.$store.commit("setCountry", country);
