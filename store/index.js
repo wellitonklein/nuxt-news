@@ -95,6 +95,21 @@ const createStore = () => {
           }
         })
       },
+      async sendComment ({ state, commit }, comment) {
+        const commentsRef = db.collection(`headlines/${state.headline.slug}/comments`)
+
+        commit('setLoading', true)
+        await commentsRef.doc(comment.id).set(comment)
+        await commentsRef.get().then(querySnapshot => {
+          let comments = []
+          querySnapshot.forEach(doc => {
+            comments.push(doc.data())
+            const updateHeadline = { ...state.headline, comments }
+            commit('setHeadline', updateHeadline)
+          })
+        })
+        commit('setLoading',false)
+      },
       async saveHeadline (context, headline) {
         const headlineRef = db.collection("headlines").doc(headline.slug);
 
