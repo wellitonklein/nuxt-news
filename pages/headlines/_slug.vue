@@ -60,7 +60,7 @@
           <md-avatar><img :src="comment.user.avatar" :alt="comment.user.username"></md-avatar>
           <div class="md-list-item-text">
             <span>{{comment.user.username}}</span>
-            <span>{{comment.publishedAt}}</span>
+            <span>{{comment.publishedAt | commentTimeToNow}}</span>
             <p>{{comment.text}}</p>
           </div>
 
@@ -74,7 +74,7 @@
       <!-- Back Button -->
       <md-button
         class="md-fixed md-fab-bottom-right md-fab md-primary"
-        @click="$router.go(-1)"
+        @click="$router.go(-1)"commentTimeToNow
       >
         <md-icon>arrow_back</md-icon>
       </md-button>

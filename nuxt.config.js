@@ -42,7 +42,8 @@ export default {
   plugins: [
     { src: '~/plugins/vue-material' },
     { src: '~/plugins/axios' },
-    { src: '~/plugins/firestore' }
+    { src: '~/plugins/firestore' },
+    { src: '~/plugins/time-filters' }
   ],
 
   /*
