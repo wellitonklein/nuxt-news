@@ -14,7 +14,6 @@ if (!firebase.apps.length) {
   }
   // Inicializar o Firebase
   firebase.initializeApp (config)
-  firebase.firestore().settings({})
 }
 
 const db = firebase.firestore();
