@@ -8,6 +8,7 @@ const createStore = () => {
   return new Vuex.Store({
     state: {
       headlines: [],
+      headline: null,
       user: null,
       feed: [],
       loading: false,
@@ -16,25 +17,28 @@ const createStore = () => {
       country: "br"
     },
     mutations: {
-      setHeadlines(state, headlines) {
+      setHeadlines (state, headlines) {
         state.headlines = headlines;
       },
-      setLoading(state, loading) {
+      setHeadline (state, headline) {
+        state.headline = headline
+      },
+      setLoading (state, loading) {
         state.loading = loading;
       },
-      setUser(state, user) {
+      setUser (state, user) {
         state.user = user;
       },
-      setToken(state, token) {
+      setToken (state, token) {
         state.token = token;
       },
-      setCategory(state, category) {
+      setCategory (state, category) {
         state.category = category;
       },
-      setCountry(state, country) {
+      setCountry (state, country) {
         state.country = country;
       },
-      setFeed(state, headlines) {
+      setFeed (state, headlines) {
         state.feed = headlines;
       },
       clearToken: state => (state.token = ""),
@@ -42,7 +46,7 @@ const createStore = () => {
       clearFeed: state => (state.feed = [])
     },
     actions: {
-      async loadHeadlines({ commit }, apiUrl) {
+      async loadHeadlines ({ commit }, apiUrl) {
         commit("setLoading", true);
         const { articles } = await this.$axios.$get(apiUrl);
         const headlines = articles.map(article => {
@@ -57,7 +61,7 @@ const createStore = () => {
         commit("setLoading", false);
         commit("setHeadlines", headlines);
       },
-      async loadUserFeed({ state, commit }) {
+      async loadUserFeed ({ state, commit }) {
         if (state.user) {
           const feedRef = db.collection(`users/${state.user.email}/feed`);
 
@@ -75,16 +79,23 @@ const createStore = () => {
           });
         }
       },
-      async addHeadlineToFeed({ state }, headline) {
+      async addHeadlineToFeed ({ state }, headline) {
         const feedRef = db
           .collection(`users/${state.user.email}/feed`)
           .doc(headline.title);
         await feedRef.set(headline);
       },
-      async loadHeadline(context, headlineSlug) {
+      async loadHeadline ({ commit }, headlineSlug) {
         const headlineRef = db.collection('headlines').doc(headlineSlug)
+
+        await headlineRef.get().then(doc => {
+          if (doc.exists) {
+            const headline = doc.data()
+            commit('setHeadline', headline)
+          }
+        })
       },
-      async saveHeadline(context, headline) {
+      async saveHeadline (context, headline) {
         const headlineRef = db.collection("headlines").doc(headline.slug);
 
         let headlineId;
@@ -98,13 +109,13 @@ const createStore = () => {
           await headlineRef.set(headline);
         }
       },
-      async removeHeadlineFromFeed({ state }, headline) {
+      async removeHeadlineFromFeed ({ state }, headline) {
         const headlineRef = db
           .collection(`users/${state.user.email}/feed`)
           .doc(headline.title);
         await headlineRef.delete();
       },
-      async authenticateUser({ commit }, userPayload) {
+      async authenticateUser ({ commit }, userPayload) {
         try {
           commit("setLoading", true);
           const authUserData = await this.$axios.$post(
@@ -139,10 +150,10 @@ const createStore = () => {
           commit("setLoading", false);
         }
       },
-      setLoggoutTimer({ dispatch }, interval) {
+      setLoggoutTimer ({ dispatch }, interval) {
         setTimeout(() => dispatch("logoutUser"), interval);
       },
-      logoutUser({ commit }) {
+      logoutUser ({ commit }) {
         commit("clearToken");
         commit("clearUser");
         commit("clearFeed");
@@ -151,6 +162,7 @@ const createStore = () => {
     },
     getters: {
       headlines: state => state.headlines,
+      headline: state => state.headline,
       feed: state => state.feed,
       loading: state => state.loading,
       user: state => state.user,
